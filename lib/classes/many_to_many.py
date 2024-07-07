@@ -21,13 +21,35 @@ class Article:
     def title(self):
         return self._title
 
+    @title.setter
+    def title(self, new_title):
+        if not isinstance(new_title, str) or len(new_title) < 5 or len(new_title) > 50:
+            raise ValueError("Article title must be between 5 and 50 characters.")
+        self._title = new_title
+
     @property
     def author(self):
         return self._author
 
+    @author.setter
+    def author(self, new_author):
+        if not isinstance(new_author, Author):
+            raise TypeError("Author must be an instance of the Author class.")
+        self._author.articles().remove(self)
+        new_author.articles().append(self)
+        self._author = new_author
+
     @property
     def magazine(self):
         return self._magazine
+
+    @magazine.setter
+    def magazine(self, new_magazine):
+        if not isinstance(new_magazine, Magazine):
+            raise TypeError("Magazine must be an instance of the Magazine class.")
+        self._magazine.articles().remove(self)
+        new_magazine.articles().append(self)
+        self._magazine = new_magazine
 
 class Author:
     def __init__(self, name):
@@ -39,6 +61,12 @@ class Author:
     @property
     def name(self):
         return self._name
+
+    @name.setter
+    def name(self, new_name):
+        if not isinstance(new_name, str) or len(new_name) == 0:
+            raise ValueError("Author's name must be a non-empty string.")
+        self._name = new_name
 
     def articles(self):
         return self._articles
@@ -71,9 +99,21 @@ class Magazine:
     def name(self):
         return self._name
 
+    @name.setter
+    def name(self, new_name):
+        if not isinstance(new_name, str) or not (2 <= len(new_name) <= 16):
+            raise ValueError("Magazine's name must be between 2 and 16 characters.")
+        self._name = new_name
+
     @property
     def category(self):
         return self._category
+
+    @category.setter
+    def category(self, new_category):
+        if not isinstance(new_category, str) or len(new_category) == 0:
+            raise ValueError("Magazine's category must be a non-empty string.")
+        self._category = new_category
 
     def articles(self):
         return self._articles
