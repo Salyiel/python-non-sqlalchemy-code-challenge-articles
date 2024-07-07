@@ -32,20 +32,39 @@ class Author:
             return None
         return list({magazine.category for magazine in magazines})
 
-
 class Magazine:
     def __init__(self, name, category):
-        self.name = name
-        self.category = category
+        if not isinstance(name, str) or len(name) < 2 or len(name) > 16:
+            raise ValueError("Magazine's name must be between 2 and 16 characters.")
+        if not isinstance(category, str) or len(category) == 0:
+            raise ValueError("Magazine's category must be a non-empty string.")
+        self._name = name
+        self._category = category
+        self._articles = []
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def category(self):
+        return self._category
 
     def articles(self):
-        pass
+        return self._articles
 
     def contributors(self):
-        pass
+        authors = {}
+        for article in self._articles:
+            if article.author.name not in authors:
+                authors[article.author.name] = 0
+            authors[article.author.name] += 1
+        return [author for author, count in authors.items() if count > 2]
 
     def article_titles(self):
-        pass
+        if not self._articles:
+            return None
+        return [article.title for article in self._articles]
 
     def contributing_authors(self):
-        pass
+        return list({article.author for article in self._articles})
