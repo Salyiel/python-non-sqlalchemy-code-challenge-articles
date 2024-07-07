@@ -12,6 +12,7 @@ class Article:
         self._author = author
         self._magazine = magazine
         self._title = title
+        
         author.articles().append(self)
         magazine.articles().append(self)
         Article.all.append(self)
@@ -28,7 +29,6 @@ class Article:
     def magazine(self):
         return self._magazine
 
-        
 class Author:
     def __init__(self, name):
         if not isinstance(name, str) or len(name) == 0:
@@ -59,7 +59,7 @@ class Author:
 
 class Magazine:
     def __init__(self, name, category):
-        if not isinstance(name, str) or len(name) < 2 or len(name) > 16:
+        if not isinstance(name, str) or not (2 <= len(name) <= 16):
             raise ValueError("Magazine's name must be between 2 and 16 characters.")
         if not isinstance(category, str) or len(category) == 0:
             raise ValueError("Magazine's category must be a non-empty string.")
