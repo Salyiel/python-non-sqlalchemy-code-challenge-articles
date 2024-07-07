@@ -4,7 +4,6 @@ from classes.many_to_many import Article
 from classes.many_to_many import Magazine
 from classes.many_to_many import Author
 
-
 class TestArticle:
     """Article in many_to_many.py"""
 
@@ -33,6 +32,10 @@ class TestArticle:
         # uncomment the next two lines if using Exceptions
         # with pytest.raises(Exception):
         #     Article(author, magazine, 500)
+
+        with pytest.raises(AttributeError):
+            article_1.title = "New Title"
+
 
     def test_title_is_valid(self):
         """title is between 5 and 50 characters inclusive"""

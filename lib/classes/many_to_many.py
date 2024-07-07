@@ -1,8 +1,33 @@
 class Article:
+    all = []
+
     def __init__(self, author, magazine, title):
-        self.author = author
-        self.magazine = magazine
-        self.title = title
+        if not isinstance(author, Author):
+            raise TypeError("Author must be an instance of the Author class.")
+        if not isinstance(magazine, Magazine):
+            raise TypeError("Magazine must be an instance of the Magazine class.")
+        if not isinstance(title, str) or len(title) < 5 or len(title) > 50:
+            raise ValueError("Article title must be between 5 and 50 characters.")
+        
+        self._author = author
+        self._magazine = magazine
+        self._title = title
+        author.articles().append(self)
+        magazine.articles().append(self)
+        Article.all.append(self)
+
+    @property
+    def title(self):
+        return self._title
+
+    @property
+    def author(self):
+        return self._author
+
+    @property
+    def magazine(self):
+        return self._magazine
+
         
 class Author:
     def __init__(self, name):
