@@ -85,8 +85,8 @@ class Magazine:
     all = []
 
     def __init__(self, name, category):
-        self.name = name
-        self.category = category
+        self._name = name
+        self._category = category
         self._articles = []
         self._contributors = set()
         Magazine.all.append(self)
@@ -97,10 +97,10 @@ class Magazine:
 
     @name.setter
     def name(self, value):
-        if not isinstance(value, str) or not (2 <= len(value) <= 16):
-            raise TypeError("Name must be a string between 2 and 16 characters")
         if hasattr(self, '_name'):
             raise AttributeError("Cannot modify name once set")
+        if not isinstance(value, str) or not (2 <= len(value) <= 16):
+            raise ValueError("Magazine's name must be between 2 and 16 characters.")
         self._name = value
 
     @property
@@ -109,18 +109,22 @@ class Magazine:
 
     @category.setter
     def category(self, value):
+        if hasattr(self, '_category'):
+            raise AttributeError("Cannot modify category once set")
         if not isinstance(value, str) or len(value) == 0:
-            raise ValueError("Category must be a non-empty string")
+            raise ValueError("Magazine's category must be a non-empty string")
         self._category = value
 
     def articles(self):
         return self._articles
 
-    def contributors(self, author):
-        if not isinstance(author, Author):
-            raise TypeError('Author must be an instance of the Author class')
-        self._contributors.add(author)
+    def contributors(self):
         return list(self._contributors)
+
+    def add_contributor(self, author):
+        if not isinstance(author, Author):
+            raise TypeError("Contributor must be an instance of the Author class")
+        self._contributors.add(author)
 
     def article_titles(self):
         if not self._articles:
@@ -128,5 +132,10 @@ class Magazine:
         return [article.title for article in self._articles]
 
     def contributing_authors(self):
-
-        return [author for author in self._contributors if len([article for article in author.articles() if article.magazine == self]) > 2]
+        authors = {}
+        for article in self._articles:
+            if article.author in authors:
+                authors[article.author].append(article)
+            else:
+                authors[article.author] = [article]
+        return [author for author, articles in authors.items() if len(articles) > 2]
