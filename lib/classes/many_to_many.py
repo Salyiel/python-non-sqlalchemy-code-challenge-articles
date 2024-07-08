@@ -72,7 +72,7 @@ class Author:
 
     def add_article(self, magazine, title):
         article = Article(self, magazine, title)
-        self._articles.append(article)
+        # self._articles.append(article)
         return article
 
     def topic_areas(self):
@@ -128,4 +128,5 @@ class Magazine:
         return [article.title for article in self._articles]
 
     def contributing_authors(self):
+
         return [author for author in self._contributors if len([article for article in author.articles() if article.magazine == self]) > 2]
