@@ -5,10 +5,6 @@ class Article:
         self.author = author
         self.magazine = magazine
         self.title = title
-
-        author._articles.append(self)
-        magazine._articles.append(self)
-
         Article.all.append(self)
 
     @property
@@ -16,126 +12,81 @@ class Article:
         return self._title
 
     @title.setter
-    def title(self, value):
-        if not isinstance(value, str) or not (5 <= len(value) <= 50):
-            raise TypeError("Title must be a string between 5 and 50 characters")
-        if hasattr(self, '_title'):
-            raise AttributeError("Cannot modify title once set")
-        self._title = value
-
-    @property
-    def author(self):
-        return self._author
-
-    @author.setter
-    def author(self, value):
-        if not isinstance(value, Author):
-            raise TypeError("Author must be an instance of the Author class")
-        self._author = value
-
-    @property
-    def magazine(self):
-        return self._magazine
-
-    @magazine.setter
-    def magazine(self, value):
-        if not isinstance(value, Magazine):
-            raise TypeError("Magazine must be an instance of the Magazine class")
-        self._magazine = value
-
+    def title(self, title):
+        if isinstance(title, str) and 5 <= len(title) <= 50 and not hasattr(self, '_title'):
+            self._title = title
+        else:
+            raise ValueError("Title must be a string between 5 and 50 characters and cannot be changed once set.")
 
 class Author:
-    all = []
-
     def __init__(self, name):
         self.name = name
-        self._articles = []
-        Author.all.append(self)
 
     @property
     def name(self):
         return self._name
 
     @name.setter
-    def name(self, value):
-        if not isinstance(value, str) or len(value) == 0:
-            raise ValueError('Name must be a non-empty string')
-        if hasattr(self, '_name'):
-            raise AttributeError('Cannot modify name once set')
-        self._name = value
+    def name(self, name):
+        if isinstance(name, str) and len(name) > 0 and not hasattr(self, '_name'):
+            self._name = name
+        else:
+            raise ValueError("Name must be a non-empty string and cannot be changed once set.")
 
     def articles(self):
-        return self._articles
+        return [article for article in Article.all if article.author == self]
 
     def magazines(self):
-        return list(set([article.magazine for article in self._articles]))
+        return list({article.magazine for article in self.articles()})
 
     def add_article(self, magazine, title):
-        article = Article(self, magazine, title)
-        # self._articles.append(article)
-        return article
+        return Article(self, magazine, title)
 
     def topic_areas(self):
-        if not self._articles:
-            return None
-        return list(set([article.magazine.category for article in self._articles]))
-
+        return list({magazine.category for magazine in self.magazines()}) or None
 
 class Magazine:
-    all = []
-
     def __init__(self, name, category):
-        self._name = name
-        self._category = category
         self._articles = []
-        self._contributors = set()
-        Magazine.all.append(self)
+        self.name = name
+        self.category = category
 
     @property
     def name(self):
         return self._name
 
     @name.setter
-    def name(self, value):
-        if hasattr(self, '_name'):
-            raise AttributeError("Cannot modify name once set")
-        if not isinstance(value, str) or not (2 <= len(value) <= 16):
-            raise ValueError("Magazine's name must be between 2 and 16 characters.")
-        self._name = value
+    def name(self, name):
+        if isinstance(name, str) and 2 <= len(name) <= 16 and not hasattr(self, '_name'):
+            self._name = name
+        else:
+            raise ValueError("Name must be a string between 2 and 16 characters and cannot be changed once set.")
 
     @property
     def category(self):
         return self._category
 
     @category.setter
-    def category(self, value):
-        if hasattr(self, '_category'):
-            raise AttributeError("Cannot modify category once set")
-        if not isinstance(value, str) or len(value) == 0:
-            raise ValueError("Magazine's category must be a non-empty string")
-        self._category = value
+    def category(self, category):
+        if isinstance(category, str) and len(category) > 0 and not hasattr(self, '_category'):
+            self._category = category
+        else:
+            raise ValueError("Category must be a non-empty string and cannot be changed once set.")
 
     def articles(self):
-        return self._articles
+        return [article for article in Article.all if article.magazine == self]
 
     def contributors(self):
-        return list(self._contributors)
-
-    def add_contributor(self, author):
-        if not isinstance(author, Author):
-            raise TypeError("Contributor must be an instance of the Author class")
-        self._contributors.add(author)
+        return list({article.author for article in self.articles()})
 
     def article_titles(self):
-        if not self._articles:
-            return None
-        return [article.title for article in self._articles]
+        return [article.title for article in self.articles()] or None
 
     def contributing_authors(self):
-        authors = {}
-        for article in self._articles:
-            if article.author in authors:
-                authors[article.author].append(article)
+        author_articles_count = {}
+        for article in self.articles():
+            if article.author in author_articles_count:
+                author_articles_count[article.author] += 1
             else:
-                authors[article.author] = [article]
-        return [author for author, articles in authors.items() if len(articles) > 2]
+                author_articles_count[article.author] = 1
+        return [author for author, count in author_articles_count.items() if count > 2] or None
