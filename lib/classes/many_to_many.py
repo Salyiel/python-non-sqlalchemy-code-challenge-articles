@@ -13,10 +13,13 @@ class Article:
 
     @title.setter
     def title(self, title):
-        if isinstance(title, str) and 5 <= len(title) <= 50 and not hasattr(self, '_title'):
-            self._title = title
+        if not hasattr(self, '_title'):
+            if isinstance(title, str) and 5 <= len(title) <= 50:
+                self._title = title
+            else:
+                raise ValueError("Title must be a string between 5 and 50 characters.")
         else:
-            raise ValueError("Title must be a string between 5 and 50 characters and cannot be changed once set.")
+            raise AttributeError("Title cannot be changed once set.")
 
 class Author:
     def __init__(self, name):
@@ -28,10 +31,13 @@ class Author:
 
     @name.setter
     def name(self, name):
-        if isinstance(name, str) and len(name) > 0 and not hasattr(self, '_name'):
-            self._name = name
+        if not hasattr(self, '_name'):
+            if isinstance(name, str) and len(name) > 0:
+                self._name = name
+            else:
+                raise ValueError("Name must be a non-empty string.")
         else:
-            raise ValueError("Name must be a non-empty string and cannot be changed once set.")
+            raise AttributeError("Name cannot be changed once set.")
 
     def articles(self):
         return [article for article in Article.all if article.author == self]
@@ -57,10 +63,13 @@ class Magazine:
 
     @name.setter
     def name(self, name):
-        if isinstance(name, str) and 2 <= len(name) <= 16 and not hasattr(self, '_name'):
-            self._name = name
+        if not hasattr(self, '_name'):
+            if isinstance(name, str) and 2 <= len(name) <= 16:
+                self._name = name
+            else:
+                raise ValueError("Name must be a string between 2 and 16 characters.")
         else:
-            raise ValueError("Name must be a string between 2 and 16 characters and cannot be changed once set.")
+            raise AttributeError("Name cannot be changed once set.")
 
     @property
     def category(self):
@@ -68,10 +77,13 @@ class Magazine:
 
     @category.setter
     def category(self, category):
-        if isinstance(category, str) and len(category) > 0 and not hasattr(self, '_category'):
-            self._category = category
+        if not hasattr(self, '_category'):
+            if isinstance(category, str) and len(category) > 0:
+                self._category = category
+            else:
+                raise ValueError("Category must be a non-empty string.")
         else:
-            raise ValueError("Category must be a non-empty string and cannot be changed once set.")
+            raise AttributeError("Category cannot be changed once set.")
 
     def articles(self):
         return [article for article in Article.all if article.magazine == self]
