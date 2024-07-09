@@ -50,12 +50,11 @@ class Author:
 
     def topic_areas(self):
         return list({magazine.category for magazine in self.magazines()}) or None
-
+    
 class Magazine:
     def __init__(self, name, category):
-        self._articles = []
-        self.name = name
-        self.category = category
+        self.name = name  # Use the setter to set the name
+        self.category = category  # Use the setter to set the category
 
     @property
     def name(self):
@@ -63,13 +62,10 @@ class Magazine:
 
     @name.setter
     def name(self, name):
-        if not hasattr(self, '_name'):
-            if isinstance(name, str) and 2 <= len(name) <= 16:
-                self._name = name
-            else:
-                raise ValueError("Name must be a string between 2 and 16 characters.")
+        if isinstance(name, str) and 2 <= len(name) <= 16:
+            self._name = name
         else:
-            raise AttributeError("Name cannot be changed once set.")
+            raise ValueError("Name must be a string between 2 and 16 characters.")
 
     @property
     def category(self):
@@ -77,13 +73,10 @@ class Magazine:
 
     @category.setter
     def category(self, category):
-        if not hasattr(self, '_category'):
-            if isinstance(category, str) and len(category) > 0:
-                self._category = category
-            else:
-                raise ValueError("Category must be a non-empty string.")
+        if isinstance(category, str) and len(category) > 0:
+            self._category = category
         else:
-            raise AttributeError("Category cannot be changed once set.")
+            raise ValueError("Category must be a non-empty string.")
 
     def articles(self):
         return [article for article in Article.all if article.magazine == self]
